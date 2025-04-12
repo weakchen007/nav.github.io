@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网站管理</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <header>
+        <h1>网站管理</h1>
+    </header>
+    
+    <main id="admin-panel">
+        <div class="admin-form">
+            <h2>添加/编辑网站</h2>
+            <form id="site-form">
+                <div class="form-group">
+                    <label for="site-title">网站名称</label>
+                    <input type="text" id="site-title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="site-image">图片URL</label>
+                    <input type="text" id="site-image" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="site-link">网站链接</label>
+                    <input type="url" id="site-link" required>
+                </div>
+                
+                <button type="submit">添加网站</button>
+            </form>
+            
+            <div class="export-section">
+                <h3>导出配置</h3>
+                <p>复制下面的代码到config.js文件中:</p>
+                <textarea id="config-output" readonly></textarea>
+                <button id="copy-btn">复制代码</button>
+            </div>
+        </div>
+        
+        <div class="site-list">
+            <h2>当前网站列表</h2>
+            <ul id="admin-site-list"></ul>
+        </div>
+    </main>
+    
+    <script src="js/config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
