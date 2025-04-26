@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1678886400000",
+    "name": "Google Search",
+    "iconUrl": "https://www.google.com/favicon.ico",
+    "targetUrl": "https://www.google.com"
+  },
+  {
+    "id": "1678886400001",
+    "name": "GitHub",
+    "iconUrl": "https://github.githubassets.com/favicons/favicon.png",
+    "targetUrl": "https://github.com"
+  }
+]
