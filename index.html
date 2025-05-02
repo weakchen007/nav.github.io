@@ -1,46 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>网站导航</title>
-    <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-        .site-card {
-            text-align: center;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .site-card img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的导航网站</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="grid-container" id="sitesContainer">
-        <!-- 网站卡片将通过 JavaScript 动态加载 -->
+    <div class="container">
+        <h1>我的导航</h1>
+        <div id="sites-container" class="grid-container">
+            <!-- 网站卡片将通过JS动态生成 -->
+        </div>
     </div>
-    <script>
-        // 从 localStorage 加载网站数据
-        function loadSites() {
-            const sites = JSON.parse(localStorage.getItem('sites') || '[]');
-            const container = document.getElementById('sitesContainer');
-            container.innerHTML = sites.map(site => `
-                <div class="site-card">
-                    <a href="${site.url}" target="_blank">
-                        <img src="${site.image}" alt="${site.name}">
-                        <h3>${site.name}</h3>
-                    </a>
-                </div>
-            `).join('');
-        }
-        loadSites();
-    </script>
+    <a href="admin.html" class="admin-link">后台管理</a>
+    <script src="script.js"></script>
 </body>
 </html>
