@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>网站导航</title>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="sitesContainer">
+            <!-- 网站卡片将通过 JavaScript 动态加载 -->
+        </div>
+    </div>
+
+    <!-- 添加网站的模态框 -->
+    <div id="addSiteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
+        <div class="bg-white text-black p-6 rounded-lg w-96 mx-auto mt-20">
+            <h2 class="text-2xl mb-4">添加新网站</h2>
+            <div class="mb-4">
+                <label class="block mb-2">网站名称</label>
+                <input type="text" id="siteName" class="w-full p-2 border rounded">
+            </div>
+            <div class="mb-4">
+                <label class="block mb-2">网站链接</label>
+                <input type="url" id="siteUrl" class="w-full p-2 border rounded">
+            </div>
+            <div class="mb-4">
+                <label class="block mb-2">图片链接</label>
+                <input type="url" id="siteImage" class="w-full p-2 border rounded">
+            </div>
+            <div class="flex justify-end gap-2">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-200 rounded">取消</button>
+                <button onclick="addSite()" class="px-4 py-2 bg-blue-500 text-white rounded">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="showModal()" class="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-full shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+    </button>
+
+    <script>
+        function loadSites() {
+            const sites = JSON.parse(localStorage.getItem('sites') || '[]');
+            const container = document.getElementById('sitesContainer');
+            container.innerHTML = sites.map(site => `
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <a href="${site.url}" target="_blank" class="block">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="${site.image}" alt="${site.name}" class="w-full h-48 object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold">${site.name}</h3>
+                            <p class="text-gray-400 text-sm truncate">${site.url}</p>
+                        </div>
+                    </a>
+                    <div class="p-4 border-t border-gray-700">
+                        <button onclick="event.preventDefault(); deleteSite('${site.url}')" 
+                                class="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                            删除
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showModal() {
+            document.getElementById('addSiteModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('addSiteModal').classList.add('hidden');
+            clearForm();
+        }
+
+        function addSite() {
+            const name = document.getElementById('siteName').value;
+            const url = document.getElementById('siteUrl').value;
+            const image = document.getElementById('siteImage').value;
+            
+            if (!name || !url || !image) {
+                alert('请填写所有字段');
+                return;
+            }
+
+            const sites = JSON.parse(localStorage.getItem('sites') || '[]');
+            
+            // 检查是否已存在相同的网站
+            if (sites.some(site => site.url === url)) {
+                alert('该网站已存在');
+                return;
+            }
+
+            sites.push({ name, url, image });
+            localStorage.setItem('sites', JSON.stringify(sites));
+            
+            loadSites();
+            closeModal();
+        }
+
+        function deleteSite(url) {
+            if (!confirm('确定要删除这个网站吗？')) return;
+            
+            const sites = JSON.parse(localStorage.getItem('sites') || '[]');
+            const newSites = sites.filter(site => site.url !== url);
+            localStorage.setItem('sites', JSON.stringify(newSites));
+            loadSites();
+        }
+
+        function clearForm() {
+            document.getElementById('siteName').value = '';
+            document.getElementById('siteUrl').value = '';
+            document.getElementById('siteImage').value = '';
+        }
+
+        // 初始加载
+        loadSites();
+    </script>
+</body>
+</html>
