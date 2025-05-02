@@ -1,75 +1,46 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>导航主页</title>
-    <link rel="stylesheet" href="style.css">
+    <title>网站导航</title>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .site-card {
+            text-align: center;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .site-card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
-
-    <h1>我的导航</h1>
-    <div id="nav-grid">
-        <!-- Navigation items will be loaded here by JavaScript -->
-        <p>正在加载导航链接...</p>
+    <div class="grid-container" id="sitesContainer">
+        <!-- 网站卡片将通过 JavaScript 动态加载 -->
     </div>
-
     <script>
-        // 配置：替换成你的 GitHub 用户名和仓库名
-        const GITHUB_USERNAME = 'weakchen007';
-        const GITHUB_REPO = 'nav.github.io';
-        const DATA_FILE_PATH = 'data.json'; // 确保和你的文件路径一致
-
-        // 构建原始文件内容的 URL
-        const dataUrl = `https://raw.githubusercontent.com/${weakchen007}/${nav.github.io}/main/${data.json}`; // 或者使用 'master' 分支
-
-        fetch(dataUrl + '?t=' + Date.now()) // 添加时间戳防止缓存
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const navGrid = document.getElementById('nav-grid');
-                navGrid.innerHTML = ''; // 清除 "加载中..."
-
-                if (data.length === 0) {
-                    navGrid.innerHTML = '<p>还没有添加任何导航链接。</p>';
-                    return;
-                }
-
-                data.forEach(item => {
-                    const link = document.createElement('a');
-                    link.href = item.targetUrl;
-                    link.className = 'nav-item';
-                    link.target = '_blank'; // 在新标签页打开
-                    link.rel = 'noopener noreferrer'; // 安全性考虑
-
-                    const img = document.createElement('img');
-                    img.src = item.iconUrl;
-                    img.alt = item.name; // Alt text for accessibility
-                    // 处理图片加载失败
-                    img.onerror = function() {
-                        this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>'; // 简单的占位符图标
-                        this.alt = '图片加载失败';
-                    };
-
-
-                    const nameSpan = document.createElement('span');
-                    nameSpan.textContent = item.name;
-
-                    link.appendChild(img);
-                    link.appendChild(nameSpan);
-                    navGrid.appendChild(link);
-                });
-            })
-            .catch(error => {
-                console.error('加载导航数据失败:', error);
-                const navGrid = document.getElementById('nav-grid');
-                navGrid.innerHTML = `<p>加载导航数据失败。请检查网络连接或稍后再试。错误: ${error.message}</p>`;
-            });
+        // 从 localStorage 加载网站数据
+        function loadSites() {
+            const sites = JSON.parse(localStorage.getItem('sites') || '[]');
+            const container = document.getElementById('sitesContainer');
+            container.innerHTML = sites.map(site => `
+                <div class="site-card">
+                    <a href="${site.url}" target="_blank">
+                        <img src="${site.image}" alt="${site.name}">
+                        <h3>${site.name}</h3>
+                    </a>
+                </div>
+            `).join('');
+        }
+        loadSites();
     </script>
-
 </body>
 </html>
