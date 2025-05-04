@@ -6,7 +6,7 @@ async function hash(input) {
 }
 async function checkPassword() {
     const password = document.getElementById('password').value;
-    // 计算哈希后的密码 "minabc" -> "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"
+    // 密码 "minabc" -> "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"
     const hashedPassword = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"; 
     if (await hash(password) === hashedPassword) {
         document.getElementById('password-section').style.display = 'none';
