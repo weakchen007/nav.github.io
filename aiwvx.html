@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>管理后台</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: radial-gradient(circle at center, #1e40af, #0f172a);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #d1d5db;
+    }
+
+    #adminApp {
+      background: #111827;
+      padding: 2rem 3rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 430px;
+      box-shadow:
+        0 0 30px #2563ebcc,
+        0 0 20px #3b82f6aa inset;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #3b82f6;
+      text-align: center;
+      text-shadow:
+        0 0 5px #3b82f6,
+        0 0 15px #2563eb;
+      user-select: none;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #93c5fd;
+    }
+
+    input[type="password"],
+    input[type="text"],
+    input[type="url"],
+    input[type="file"] {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #3b82f6;
+      border-radius: 6px;
+      color: #d1d5db;
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      outline-offset: 2px;
+      outline-color: #2563eb;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="password"]:focus,
+    input[type="text"]:focus,
+    input[type="url"]:focus,
+    input[type="file"]:focus {
+      border-color: #60a5fa;
+    }
+
+    button {
+      margin-top: 1rem;
+      width: 100%;
+      background: #2563eb;
+      color: white;
+      padding: 0.75rem;
+      font-weight: 700;
+      font-size: 1.125rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover:not(:disabled) {
+      background: #3b82f6;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #errorMsg,
+    #loginErrorMsg {
+      margin-top: 1rem;
+      color: #f87171;
+      font-weight: 600;
+      text-align: center;
+      user-select: none;
+      min-height: 1.25rem;
+    }
+
+    /* 网站列表容器 */
+    #siteListContainer {
+      margin-top: 2rem;
+      max-height: 320px;
+      overflow-y: auto;
+      border: 1px solid #3b82f6;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      background-color: #1f2937;
+    }
+
+    #siteListContainer ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #siteListContainer li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2563eb;
+      padding: 0.5rem 0;
+      color: #cbd5e1;
+      user-select: text;
+      font-size: 0.95rem;
+    }
+
+    #siteListContainer li:last-child {
+      border-bottom: none;
+    }
+
+    #siteListContainer button.deleteBtn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #f87171;
+      transition: color 0.3s ease;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      padding: 0;
+    }
+
+    #siteListContainer button.deleteBtn:hover {
+      color: #dc2626;
+    }
+
+    #siteListContainer button.deleteBtn svg {
+      pointer-events: none;
+    }
+
+    #formAddSite label span.required {
+      color: #f87171;
+      margin-left: 0.2em;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="adminApp" role="main" tabindex="0">
+    <h1>导航后台管理</h1>
+
+    <!-- 登录部分 -->
+    <section id="loginSection" aria-label="登录管理后台">
+      <form id="loginForm" autocomplete="off" novalidate>
+        <label for="passwordInput">登录密码<span class="required">*</span></label>
+        <input type="password" id="passwordInput" name="passwordInput" placeholder="请输入管理密码" required autofocus
+          aria-required="true" aria-describedby="loginErrorMsg" autocomplete="new-password" />
+        <button type="submit" aria-label="登录">登录</button>
+        <p role="alert" id="loginErrorMsg"></p>
+      </form>
+    </section>
+
+    <!-- 管理内容部分，默认隐藏 -->
+    <section id="contentSection" style="display:none;" aria-label="管理内容区域">
+      <form id="formAddSite" autocomplete="off" novalidate>
+        <label for="siteName">网站名称<span class="required">*</span></label>
+        <input type="text" id="siteName" name="siteName" placeholder="请输入网站名称" required
+          aria-required="true" autocomplete="off" />
+
+        <label for="siteUrl" class="mt-4">网址链接<span class="required">*</span></label>
+        <input type="url" id="siteUrl" name="siteUrl" placeholder="https://example.com" required aria-required="true"
+          autocomplete="off" />
+
+        <label for="siteImageUrl" class="mt-4">图片 URL</label>
+        <input type="url" id="siteImageUrl" name="siteImageUrl" placeholder="图片链接 (如https://...)" autocomplete="off" />
+
+        <label for="siteImageFile" class="mt-4">或上传本地图片</label>
+        <input type="file" id="siteImageFile" name="siteImageFile" accept="image/*" aria-describedby="fileHelp" />
+        <p id="fileHelp" class="text-gray-400 text-xs mt-0.5 select-none">
+          图片优先使用本地上传文件，如无则用图片URL
+        </p>
+
+        <button type="submit" id="addSiteBtn">添加网站</button>
+        <p role="alert" id="errorMsg"></p>
+      </form>
+
+      <div id="siteListContainer" aria-label="已添加网站列表">
+        <h2 class="text-indigo-400 font-semibold mb-2 select-none">已添加网站</h2>
+        <ul id="siteList" tabindex="0" aria-live="polite" aria-relevant="additions removals">
+          <!-- 列表内容 -->
+        </ul>
+        <p id="noSitesMsg" class="text-gray-500 italic text-center mt-4 select-none">暂无网站，快添加吧~</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      // 密码配置（请部署时自行更改）
+      const PASSWORD_HASH = '9b45e170a2bca746b07c2a17abb4a4b9d4aba1b724ebd0777a663d5786b21377'; // SHA-256("admin123")
+
+      // DOM elements
+      const loginSection = document.getElementById('loginSection');
+      const loginForm = document.getElementById('loginForm');
+      const passwordInput = document.getElementById('passwordInput');
+      const loginErrorMsg = document.getElementById('loginErrorMsg');
+
+      const contentSection = document.getElementById('contentSection');
+      const formAddSite = document.getElementById('formAddSite');
+      const inputName = document.getElementById('siteName');
+      const inputUrl = document.getElementById('siteUrl');
+      const inputImageUrl = document.getElementById('siteImageUrl');
+      const inputImageFile = document.getElementById('siteImageFile');
+      const errorMsg = document.getElementById('errorMsg');
+      const siteList = document.getElementById('siteList');
+      const noSitesMsg = document.getElementById('noSitesMsg');
+      const addSiteBtn = document.getElementById('addSiteBtn');
+
+      const STORAGE_KEY = 'navSites';
+      const STORAGE_AUTH_KEY = 'navAdminAuth';
+
+      let sites = [];
+
+      /**
+       * 工具函数：SHA-256 hash，返回hex字符串
+       * Web Crypto API异步实现
+       */
+      async function sha256(str) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      /**
+       * 简单网址有效性检测
+       */
+      function isValidUrl(url) {
+        try {
+          const u = new URL(url);
+          return u.protocol === "http:" || u.protocol === "https:";
+        } catch {
+          return false;
+        }
+      }
+
+      /**
+       * 本地图片文件转 dataUrl
+       */
+      function fileToDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target.result);
+          reader.onerror = e => reject(e);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      /**
+       * 加载站点数据
+       */
+      function loadSitesFromStorage() {
+        const json = localStorage.getItem(STORAGE_KEY);
+        if (!json) return;
+        try {
+          const parsed = JSON.parse(json);
+          if (Array.isArray(parsed)) {
+            sites = parsed.filter(s =>
+              typeof s.name === 'string' &&
+              typeof s.url === 'string' &&
+              typeof s.imageUrl === 'string'
+            );
+          }
+        } catch {
+          sites = [];
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+
+      /**
+       * 保存站点数据
+       */
+      function saveSitesToStorage() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+      }
+
+      /**
+       * 渲染已添加网站列表
+       */
+      function renderSiteList() {
+        siteList.innerHTML = '';
+        if (sites.length === 0) {
+          noSitesMsg.style.display = '';
+          return;
+        }
+        noSitesMsg.style.display = 'none';
+        sites.forEach((site, i) => {
+          const li = document.createElement('li');
+          li.title = site.url;
+
+          // 网站名及链接
+          const anchor = document.createElement('a');
+          anchor.href = site.url;
+          anchor.textContent = site.name;
+          anchor.className = 'truncate max-w-[80%] text-indigo-300 hover:underline';
+          anchor.target = '_blank';
+          anchor.rel = 'noopener noreferrer nofollow';
+
+          // 删除按钮
+          const btnDel = document.createElement('button');
+          btnDel.className = 'deleteBtn';
+          btnDel.setAttribute('aria-label', `删除网站 ${site.name}`);
+          btnDel.type = 'button';
+          btnDel.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          `;
+          btnDel.addEventListener('click', () => {
+            if (confirm(`确认删除网站 "${site.name}" 吗？此操作不可撤销。`)) {
+              sites.splice(i, 1);
+              saveSitesToStorage();
+              renderSiteList();
+            }
+          });
+
+          li.appendChild(anchor);
+          li.appendChild(btnDel);
+          siteList.appendChild(li);
+        });
+      }
+
+      /**
+       * 清理并重置添加站点表单错误信息
+       */
+      function resetFormErrors() {
+        errorMsg.textContent = '';
+        inputName.setCustomValidity('');
+        inputUrl.setCustomValidity('');
+      }
+
+      /**
+       * 登录状态检测与页面状态切换
+       */
+      function checkLoginStatus() {
+        // 存储登录标识 (比如token或简单字段)
+        // 只做前端验证：存在localStorage navAdminAuth且为 "true"
+        return localStorage.getItem(STORAGE_AUTH_KEY) === 'true';
+      }
+
+      function setLoggedIn(value) {
+        if (value) {
+          localStorage.setItem(STORAGE_AUTH_KEY, 'true');
+        } else {
+          localStorage.removeItem(STORAGE_AUTH_KEY);
+        }
+      }
+
+      /**
+       * 显示内容或登录界面
+       */
+      function updateUIByLoginStatus() {
+        const loggedIn = checkLoginStatus();
+        if (loggedIn) {
+          loginSection.style.display = 'none';
+          contentSection.style.display = '';
+          addSiteBtn.disabled = false;
+          renderSiteList();
+          inputName.focus();
+        } else {
+          loginSection.style.display = '';
+          contentSection.style.display = 'none';
+          addSiteBtn.disabled = true;
+          passwordInput.value = '';
+          loginErrorMsg.textContent = '';
+          passwordInput.focus();
+        }
+      }
+
+      // 登录处理
+      loginForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        loginErrorMsg.textContent = '';
+        const pwd = passwordInput.value.trim();
+        if (!pwd) {
+          loginErrorMsg.textContent = '请输入密码。';
+          passwordInput.focus();
+          return;
+        }
+        const hash = await sha256(pwd);
+        if (hash === PASSWORD_HASH) {
+          setLoggedIn(true);
+          loadSitesFromStorage();
+          updateUIByLoginStatus();
+        } else {
+          loginErrorMsg.textContent = '密码错误，请重试。';
+          passwordInput.focus();
+          passwordInput.select();
+          setLoggedIn(false);
+        }
+      });
+
+      // 添加站点处理
+      formAddSite.addEventListener('submit', async e => {
+        e.preventDefault();
+        resetFormErrors();
+
+        const name = inputName.value.trim();
+        const url = inputUrl.value.trim();
+        let imageUrl = inputImageUrl.value.trim();
+        const imageFile = inputImageFile.files[0];
+
+        if (!name) {
+          errorMsg.textContent = '请填写网站名称。';
+          inputName.focus();
+          return;
+        }
+        if (!isValidUrl(url)) {
+          errorMsg.textContent = '请输入有效的网址（需要 http:// 或 https://）。';
+          inputUrl.focus();
+          return;
+        }
+
+        // 图片优先本地上传文件
+        if (imageFile) {
+          try {
+            imageUrl = await fileToDataUrl(imageFile);
+          } catch {
+            errorMsg.textContent = '本地图片读取失败，请重试。';
+            inputImageFile.focus();
+            return;
+          }
+        }
+
+        if (!imageUrl) {
+          imageUrl = 'https://via.placeholder.com/320x160?text=No+Image';
+        } else if (!/^data:image/.test(imageUrl) && !isValidUrl(imageUrl)) {
+          errorMsg.textContent = '请提供有效的图片URL或上传本地图片。';
+          inputImageUrl.focus();
+          return;
+        }
+
+        sites.push({ name, url, imageUrl });
+        saveSitesToStorage();
+        renderSiteList();
+
+        formAddSite.reset();
+        errorMsg.textContent = '添加成功！';
+        setTimeout(() => errorMsg.textContent = '', 2000);
+        inputName.focus();
+      });
+
+      // 页面初始化
+      updateUIByLoginStatus();
+
+    })();
+  </script>
+</body>
+
+</html>
