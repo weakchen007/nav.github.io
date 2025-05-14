@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,7 +12,6 @@
             margin: 0;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
-
         /* 卡片阴影和过渡 */
         .nav-card {
             @apply relative rounded-xl overflow-hidden shadow-2xl cursor-pointer transition-transform transform;
@@ -23,13 +21,11 @@
             background: #1a202c;
             border-radius: 0.75rem; /* rounded-xl */
         }
-
         .nav-card:hover {
             box-shadow: 0 20px 40px rgba(255, 255, 255, 0.6);
             transform: scale(1.07);
             z-index: 10;
         }
-
         /* 图片样式 */
         .nav-card img {
             width: 100%;
@@ -39,7 +35,6 @@
             border-top-right-radius: 0.75rem;
             flex-shrink: 0;
         }
-
         /* 名称容器，图片下方，居中 */
         .nav-title {
             margin-top: 8px;
@@ -57,7 +52,6 @@
             padding-bottom: 8px;
             font-family: 'Courier New', Courier, monospace;
         }
-
         @keyframes glowPulse {
             0%, 100% {
                 text-shadow:
@@ -76,7 +70,6 @@
                 color: #aff;
             }
         }
-
         /* container整体排布 */
         main {
             padding: 1.5rem 1rem 3rem;
@@ -84,14 +77,12 @@
             margin-left: auto;
             margin-right: auto;
         }
-
         /* 网格布局 */
         #navGrid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 1.25rem;
         }
-
         /* 无数据提示样式 */
         #noSitesMsg {
             text-align: center;
@@ -102,7 +93,6 @@
             grid-column: 1/-1;
             padding: 3rem 0;
         }
-
         /* 顶部导航栏 */
         header {
             background: linear-gradient(90deg, #12005e, #4300b3);
@@ -117,16 +107,19 @@
                 0 0 12px #0ff,
                 0 0 30px #00ffffcc;
             font-family: 'Courier New', Courier, monospace;
+
+            /* 让 header 水平和垂直居中 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 4rem; /* 你可以调整高度 */
+            text-align: center;
         }
     </style>
 </head>
-
 <body>
     <header>
-       <meta charset="UTF-8" />
-       <meta name="viewport" content="width=device-width, initial-scale=1" />
-       <title>风清扬的导航页面</title>
-       <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+        我的导航页面
     </header>
     <main>
         <section id="navGrid" aria-label="网站导航网格">
@@ -134,19 +127,15 @@
         </section>
         <p id="noSitesMsg" class="hidden">暂无网站，后台添加后，会在这里显示</p>
     </main>
-
     <script>
         (() => {
             // DOM
             const navGrid = document.getElementById('navGrid');
             const noSitesMsg = document.getElementById('noSitesMsg');
-
             // 存储Key
             const STORAGE_KEY = 'navSites';
-
             // 读取站点数据
             let sites = [];
-
             /**
              * 加载数据
              */
@@ -167,7 +156,6 @@
                     localStorage.removeItem(STORAGE_KEY);
                 }
             }
-
             /**
              * 渲染导航卡片
              */
@@ -178,41 +166,33 @@
                     return;
                 }
                 noSitesMsg.classList.add('hidden');
-
                 sites.forEach(site => {
                     const a = document.createElement('a');
                     a.href = site.url;
                     a.target = '_blank';
                     a.rel = 'noopener noreferrer nofollow';
                     a.className = 'nav-card';
-
                     // 图片
                     const img = document.createElement('img');
                     img.alt = site.name;
                     img.loading = 'lazy';
                     img.src = site.imageUrl || 'https://via.placeholder.com/300x150?text=No+Image';
-
                     // 标题，居中且荧光闪烁
                     const titleDiv = document.createElement('div');
                     titleDiv.className = 'nav-title';
                     titleDiv.textContent = site.name;
-
                     // 组装
                     a.appendChild(img);
                     a.appendChild(titleDiv);
-
                     navGrid.appendChild(a);
                 });
             }
-
             // 初始化
             loadSitesFromStorage();
             renderNavGrid();
-
-            // 友情提示：管理后台为独立页面，此页面不含管理后台功能，请访问 upadmin.html 进行管理。
-            // 您可自行创建 upadmin.html 文件实现管理功能（含密码验证）。
+            // 友情提示：管理后台为独立页面，此页面不含管理后台功能，请访问 admin.html 进行管理。
+            // 您可自行创建 admin.html 文件实现管理功能（含密码验证）。
         })();
     </script>
 </body>
-
 </html>
