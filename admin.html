@@ -120,8 +120,7 @@
     const val = passwordInput.value.trim();
     if(val === ADMIN_PASSWORD){
       errorMsg.style.display = 'none';
-      // 密码正确，跳转至管理页面 admin.html
-      // 可以根据你的网站结构自行修改跳转地址
+      // 跳转后台管理主页面 admin.html，确定 admin.html 在同目录且存在
       window.location.href = 'admin.html';
     } else {
       errorMsg.style.display = 'block';
